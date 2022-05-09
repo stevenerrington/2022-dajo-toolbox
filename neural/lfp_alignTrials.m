@@ -11,7 +11,7 @@ alignTemp = cell(nChannels,length(alignmentEvents));
 
 parfor channelIdx = 1:nChannels
     channel = channelNames{channelIdx};
-    fprintf(['Aligning LFP for ' channel '... \n'])
+    fprintf(['Aligning LFP for channel ' int2str(channelIdx) '... \n'])
     
     for alignmentIdx = 1:nEvents
         alignmentName = alignmentEvents{alignmentIdx};

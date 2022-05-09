@@ -1,4 +1,4 @@
-function dajo_datamap_post = data_sessionLocator(dajo_datamap, varargin)
+function dajo_datamap_post = data_sessionCurate(dajo_datamap, varargin)
 
 dajo_penmap = table();
 for ii = 1:size(dajo_datamap,1)
@@ -43,7 +43,7 @@ end
 
 if exist('spacing') == 1
     for ii = 1:length(spacing)
-        spacing_flag(:,ii) = dajo_penmap.spacing == spacing;
+        spacing_flag(:,ii) = dajo_penmap.spacing == spacing(ii);
     end
     spacing_flag = sum(spacing_flag,2);    
 else
