@@ -32,6 +32,3 @@ neuralFilename = data_findNeuralFile(behFilename, dajo_datamap);
 [valueStopSignalBeh, valueRTdist] = beh_getValueStoppingInfo(stateFlags,Infos,ttx);
 
 [ttm] = processTrialMatching(stopSignalBeh, ttx, trialEventTimes);
-tdtEyes = alignEyes(trialEventTimes,TrialEyes, [-1000 2000]); % <- This needs checking!
-tdtLFP_aligned = alignLFP(trialEventTimes,tdtLFP, timeWin);
-tdtSpk_aligned = alignSDF(trialEventTimes, Infos, tdtSpk, timeWin);
