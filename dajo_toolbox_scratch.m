@@ -6,7 +6,7 @@ dirs.nest = 'C:\Users\Steven\Desktop\';
 dirs.toolbox = 'Projects\2022-dajo-toolbox';
 
 % Load in datamap
-dajo_datamap = load_dajo_datamap(dirs);
+dajo_datamap = load_datamap(dirs);
 
 % Find sessions of interest
 dajo_datamap_post = data_sessionLocator(dajo_datamap,...
@@ -22,6 +22,8 @@ behFilename = data_findBehFile(neuralFilename);
 behFilename = 'dar-cmand1DR-20210618-beh';
 neuralFilename = data_findNeuralFile(behFilename, dajo_datamap);
 
+
+%
 
 
 % Behavioural extraction codes

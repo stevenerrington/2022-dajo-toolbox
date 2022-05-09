@@ -42,10 +42,6 @@ for trialTypeIdx = 1:length(trialTypes)
     end
 end
 
-%% Latency matching
-[stopSignalBeh, RTdist] = extractStopBeh(stateFlags,Infos,ttx);
-
-
 %% Trial history
 clear pre_nostop_ttx ttx_history
 
@@ -69,30 +65,31 @@ trialEventTimes.fixSpotOn = Infos.FixSpotOn_;
 trialEventTimes.fixation = Infos.AcquireFix_;
 trialEventTimes.target = Infos.Target_;
 trialEventTimes.stopSignal = Infos.StopSignal_;
-% trialEventTimes.ssrt = Infos.StopSignal_+stopSignalBeh.ssrt.integrationWeighted;
 trialEventTimes.saccade = Infos.Decide_;
 trialEventTimes.tone = Infos.ToneDelayEnd_;
 trialEventTimes.reward = Infos.RewardDelayEnd_;
 trialEventTimes.timeout = Infos.TimeoutStart_;
-trialEventTimes.timeout = Infos.TimeoutStart_;
+end
 
-% 
+
+%
 % % Find trials with no stop-signals
 % no_stopSignal_trls = find(isnan(trialEventTimes.stopSignal));
-% 
+% trialEventTimes.ssrt = Infos.StopSignal_+stopSignalBeh.ssrt.integrationWeighted;
+
 % % For each no stop-signal trial
 % for trlIdx = 1:size(trialEventTimes,1)
 %     trl = trlIdx;
-%     
+%
 %     trialEventTimes.stopSignal_artifical(trl) = ...
 %         trialEventTimes.target(trl) + ... % Get the target time (as it's NaN for no target, we won't get a value).
 %         round(stateFlags.LastSsdIdx(trl)*(1000/60)); % ... add the SSD (ms) from the previous stop trial
-%     
+%
 %     % Get an estimated SSRT time for trials where there was a target.
 %     trialEventTimes.ssrt(trl) = ...
 %         trialEventTimes.target(trl) + ... % Get the target time (as it's NaN for no target, we won't get a value).
 %         round(stateFlags.LastSsdIdx(trl)*(1000/60)) +... % ... add the SSD (ms) from the previous stop trial
 %         stopSignalBeh.ssrt.integrationWeighted; % ... and add SSRT.
-%     
+%
 % end
 
