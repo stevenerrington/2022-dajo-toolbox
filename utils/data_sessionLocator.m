@@ -2,12 +2,12 @@ function dajo_datamap_post = data_sessionLocator(dajo_datamap, varargin)
 
 dajo_penmap = table();
 for ii = 1:size(dajo_datamap,1)
-    dajo_penmap = [dajo_penmap; dajo_datamap.neurophysInfo{ii,1}];
+    sessionLabel = table(repmat(ii,dajo_datamap.nElectrodes(ii),1),'VariableNames',{'sessionIdx'});
+    behLabel = table(repmat(dajo_datamap.session(ii),dajo_datamap.nElectrodes(ii),1),'VariableNames',{'sessionBeh'});
+    monkeyLabel = table(repmat({dajo_datamap.session{ii}(1:3)},dajo_datamap.nElectrodes(ii),1),'VariableNames',{'monkey'});
+    dajo_penmap = [dajo_penmap; [sessionLabel behLabel monkeyLabel dajo_datamap.neurophysInfo{ii,1}]];
 end
 
-for ii = 1:size(dajo_penmap,1)
-dajo_penmap.monkey{ii} = dajo_penmap.dataFilename{ii}(1:3);
-end
 
 %% Decode varargin
 varStrInd = find(cellfun(@ischar,varargin));

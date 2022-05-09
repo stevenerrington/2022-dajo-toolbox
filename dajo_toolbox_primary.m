@@ -9,17 +9,18 @@ dirs.toolbox = 'Projects\2022-dajo-toolbox';
 dajo_datamap = load_dajo_datamap(dirs);
 
 % Find sessions of interest
-monkey = 'jou'; area = 'ACC'; spk = 1; lfp = 1; spacing = '150';
-
 dajo_datamap_post = data_sessionLocator(dajo_datamap,...
     'area',{'DMFC','ACC'},...
     'monkey',{'dar','jou'},...
     'spacing',150,...
     'signal',{'LFP','SPK'}); % < In progress; 20220509
 
+% Map between behavioural and neural data
+neuralFilename = 'dar-cmand1DR-ACC-20210618'; % Example session
+behFilename = data_findBehFile(neuralFilename);
 
-
-behFiles = data_findBehFile(dajo_datamap, dajo_datamap_post.dataFilename);  % < In progress; 20220509
+behFilename = 'dar-cmand1DR-20210618-beh';
+neuralFilename = data_findNeuralFile(behFilename, dajo_datamap);
 
 
 
