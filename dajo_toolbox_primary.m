@@ -14,8 +14,12 @@ monkey = 'jou'; area = 'ACC'; spk = 1; lfp = 1; spacing = '150';
 dajo_datamap_post = data_sessionLocator(dajo_datamap,...
     'area',{'DMFC','ACC'},...
     'monkey',{'dar','jou'},...
-    'signal',{'LFP','SPK'});
+    'spacing',150,...
+    'signal',{'LFP','SPK'}); % < In progress; 20220509
 
+
+
+behFiles = data_findBehFile(dajo_datamap, dajo_datamap_post.dataFilename);  % < In progress; 20220509
 
 
 
