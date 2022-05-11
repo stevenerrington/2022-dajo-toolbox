@@ -18,9 +18,12 @@ for iv = 1:length(varStrInd)
         case {'monkey'}; monkey = varargin{varStrInd(iv)+1};
         case {'area'}; area = varargin{varStrInd(iv)+1}; 
         case {'spacing'}; spacing = varargin{varStrInd(iv)+1}; 
+        case {'signal'}; signal = varargin{varStrInd(iv)+1}; 
     end
 end
 
+% Find sessions of interest for: %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Monkey %%%%%%%%%%%%%%%%%%%%
 if exist('monkey') == 1
     for ii = 1:length(monkey)
         monkeyTag = monkey{ii};
@@ -31,6 +34,7 @@ else
     monkey_flag = ones(size(dajo_penmap,1),1);
 end
 
+%%%%%%%%%%%%%%%%% Area %%%%%%%%%%%%%%%%%%%%
 if exist('area') == 1
     for ii = 1:length(area)
         areaTag = area{ii};
@@ -41,6 +45,7 @@ else
     area_flag = ones(size(dajo_penmap,1),1);
 end
 
+% Spacing %%%%%%%%%%%%%%%%
 if exist('spacing') == 1
     for ii = 1:length(spacing)
         spacing_flag(:,ii) = dajo_penmap.spacing == spacing(ii);
@@ -50,8 +55,26 @@ else
     spacing_flag = ones(size(dajo_penmap,1),1);
 end
 
+%%%%%%%%%%%%%%%%% Signal %%%%%%%%%%%%%%%%
+
+if exist('signal') == 1
+    for ii = 1:length(signal)
+        signalTag = signal{ii};
+        if strcmp(signalTag,'SPK')
+        signal_flag(:,ii) = dajo_penmap.spk_flag == 1;
+        elseif strcmp(signalTag,'LFP')
+        signal_flag(:,ii) = dajo_penmap.lfp_flag == 1;
+        end
+    end
+    signal_flag = sum(signal_flag,2);    
+else
+    signal_flag = ones(size(dajo_penmap,1),1);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 dajo_datamap_post = ...
-    dajo_penmap(monkey_flag == 1 & area_flag == 1 & spacing_flag == 1,:);
+    dajo_penmap(monkey_flag == 1 & area_flag == 1 & spacing_flag == 1 & signal_flag == 1,:);
 
 
 end
