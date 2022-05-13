@@ -34,7 +34,7 @@ dajo_datamap_curated = data_sessionCurate...
 % filenames (we chose unique filenames to get individual sessions, and
 % not repeat the import for dual penetration sessions).
 dataFiles = unique(dajo_datamap_curated.sessionBeh);
-dataFiles = dataFiles(1:10);
+% dataFiles = dataFiles(1:10);
 
 %% Behavior
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,12 +110,8 @@ signal_collapse = neural_collapseSignalSession(signal_average,...
     'conditions_map',[1 2]);
 
 
+ [norm_signal_1, norm_signal_2] = neural_normaliseSignals...
+     (signal_collapse.target.hi,...
+     signal_collapse.target.lo,...
+     'method','max');
 
-
-
-
-
-
-figure; hold on
-plot([-1000:2000],nanmean(signal_collapse.target.hi),'r')
-plot([-1000:2000],nanmean(signal_collapse.target.lo),'b')
