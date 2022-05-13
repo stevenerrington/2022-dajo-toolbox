@@ -4,11 +4,12 @@ names = fieldnames( spkTimes );
 subStr = 'DSP';
 DSPstruct = rmfield( spkTimes, names( find( cellfun( @isempty, strfind( names , subStr ) ) ) ) );
 DSPnames = fieldnames(DSPstruct);
+endTime = round(max(max(trialEventTimes{:, :}))+10000); % Find last event stamp and add 10 secs
 
 for DSPidx = 1:length(DSPnames)
     DSPlabel = DSPnames{DSPidx};
     
-    SessionSDF = SpkConvolver (spkTimes.(DSPlabel), round(max(trialEventTimes.fixSpotOn(end))+10000), 'PSP');
+    SessionSDF = SpkConvolver (spkTimes.(DSPlabel), endTime, 'PSP');
     
     eventNames = fieldnames(trialEventTimes);
     eventNames = eventNames(1:length(eventNames)-3);
