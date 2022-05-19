@@ -1,4 +1,4 @@
-function signal_average = neural_getSignalaverage(signal_data,varargin)
+function signal_average = neural_getSignalAverage(signal_data,varargin)
 
 %% Decode varargin
 varStrInd = find(cellfun(@ischar,varargin));

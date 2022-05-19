@@ -69,27 +69,40 @@ trialEventTimes.saccade = Infos.Decide_;
 trialEventTimes.tone = Infos.ToneDelayEnd_;
 trialEventTimes.reward = Infos.RewardDelayEnd_;
 trialEventTimes.timeout = Infos.TimeoutStart_;
+
+nss_trl_idx = find(isnan(trialEventTimes.stopSignal));
+% Stop-signal delay 
+inh_SSD = unique(stateFlags.UseSsdVrCount);
+ssdVRvalues = inh_SSD(~isnan(inh_SSD));
+inh_SSD = round(ssdVRvalues*(1000/60));
+
+% For each no stop-signal trial
+for trlIdx = 1:length(nss_trl_idx)
+    trl = nss_trl_idx(trlIdx);
+    
+    ssd_i = stateFlags.LastSsdIdx(trl)+1;
+    
+    
+    if isnan(ssd_i)
+        ssd_i = 3;
+    end
+    
+    if ssd_i > length(inh_SSD)
+        ssd_i = length(inh_SSD);
+    end
+    
+    trialEventTimes.stopSignal_artifical(trl) = ...
+        trialEventTimes.target(trl) + ... % Get the target time (as it's NaN for no target, we won't get a value).
+        inh_SSD(ssd_i); % ... add the SSD (ms) from the previous stop trial
+    
+    
 end
 
 
-%
-% % Find trials with no stop-signals
-% no_stopSignal_trls = find(isnan(trialEventTimes.stopSignal));
-% trialEventTimes.ssrt = Infos.StopSignal_+stopSignalBeh.ssrt.integrationWeighted;
+trialEventTimes.stopSignal_artifical(~isnan(trialEventTimes.stopSignal)) =...
+    trialEventTimes.stopSignal(~isnan(trialEventTimes.stopSignal));
 
-% % For each no stop-signal trial
-% for trlIdx = 1:size(trialEventTimes,1)
-%     trl = trlIdx;
-%
-%     trialEventTimes.stopSignal_artifical(trl) = ...
-%         trialEventTimes.target(trl) + ... % Get the target time (as it's NaN for no target, we won't get a value).
-%         round(stateFlags.LastSsdIdx(trl)*(1000/60)); % ... add the SSD (ms) from the previous stop trial
-%
-%     % Get an estimated SSRT time for trials where there was a target.
-%     trialEventTimes.ssrt(trl) = ...
-%         trialEventTimes.target(trl) + ... % Get the target time (as it's NaN for no target, we won't get a value).
-%         round(stateFlags.LastSsdIdx(trl)*(1000/60)) +... % ... add the SSD (ms) from the previous stop trial
-%         stopSignalBeh.ssrt.integrationWeighted; % ... and add SSRT.
-%
-% end
 
+
+
+end
