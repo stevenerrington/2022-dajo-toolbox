@@ -8,6 +8,11 @@ for ii = 1:size(dajo_datamap,1)
     dajo_penmap = [dajo_penmap; [sessionLabel behLabel monkeyLabel dajo_datamap.neurophysInfo{ii,1}]];
 end
 
+for pen_i = 1:size(dajo_penmap,1)
+    nNeurons_pen(pen_i,1) = size(dajo_penmap.spkInfo(pen_i,1).unitInfo,1);
+end
+
+
 
 %% Decode varargin
 varStrInd = find(cellfun(@ischar,varargin));
@@ -16,9 +21,9 @@ varStrInd = find(cellfun(@ischar,varargin));
 for iv = 1:length(varStrInd)
     switch varargin{varStrInd(iv)}
         case {'monkey'}; monkey = varargin{varStrInd(iv)+1};
-        case {'area'}; area = varargin{varStrInd(iv)+1}; 
-        case {'spacing'}; spacing = varargin{varStrInd(iv)+1}; 
-        case {'signal'}; signal = varargin{varStrInd(iv)+1}; 
+        case {'area'}; area = varargin{varStrInd(iv)+1};
+        case {'spacing'}; spacing = varargin{varStrInd(iv)+1};
+        case {'signal'}; signal = varargin{varStrInd(iv)+1};
     end
 end
 
@@ -40,7 +45,7 @@ if exist('area') == 1
         areaTag = area{ii};
         area_flag(:,ii) = strcmp(dajo_penmap.area,areaTag);
     end
-    area_flag = sum(area_flag,2);    
+    area_flag = sum(area_flag,2);
 else
     area_flag = ones(size(dajo_penmap,1),1);
 end
@@ -50,7 +55,7 @@ if exist('spacing') == 1
     for ii = 1:length(spacing)
         spacing_flag(:,ii) = dajo_penmap.spacing == spacing(ii);
     end
-    spacing_flag = sum(spacing_flag,2);    
+    spacing_flag = sum(spacing_flag,2);
 else
     spacing_flag = ones(size(dajo_penmap,1),1);
 end
@@ -61,12 +66,12 @@ if exist('signal') == 1
     for ii = 1:length(signal)
         signalTag = signal{ii};
         if strcmp(signalTag,'SPK')
-        signal_flag(:,ii) = dajo_penmap.spk_flag == 1;
+            signal_flag(:,ii) = dajo_penmap.spk_flag == 1 & nNeurons_pen > 0;
         elseif strcmp(signalTag,'LFP')
-        signal_flag(:,ii) = dajo_penmap.lfp_flag == 1;
+            signal_flag(:,ii) = dajo_penmap.lfp_flag == 1;
         end
     end
-    signal_flag = sum(signal_flag,2);    
+    signal_flag = sum(signal_flag,2);
 else
     signal_flag = ones(size(dajo_penmap,1),1);
 end

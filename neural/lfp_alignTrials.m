@@ -1,4 +1,4 @@
-function tdtLFP = lfp_alignTrials(trialEventTimes,tdtLFP, alignmentWindow)
+function LFP = lfp_alignTrials(trialEventTimes,tdtLFP, alignmentWindow)
 
 fnames = fieldnames(trialEventTimes);
 alignmentEvents = fnames(1:length(fnames)-3);
@@ -11,7 +11,7 @@ alignTemp = cell(nChannels,length(alignmentEvents));
 
 parfor channelIdx = 1:nChannels
     channel = channelNames{channelIdx};
-    fprintf(['Aligning LFP for channel ' int2str(channelIdx) '... \n'])
+%     fprintf(['Aligning LFP for channel ' int2str(channelIdx) '... \n'])
     
     for alignmentIdx = 1:nEvents
         alignmentName = alignmentEvents{alignmentIdx};
@@ -47,7 +47,7 @@ for channelIdx = 1:nChannels
     for alignmentIdx = 1:nEvents
         alignmentName = alignmentEvents{alignmentIdx};
 
-        tdtLFP.aligned.(channel).(alignmentName) = ...
+        LFP.(channel).(alignmentName) = ...
             alignTemp{channelIdx,alignmentIdx};
     end
 end

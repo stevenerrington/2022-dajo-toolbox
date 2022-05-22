@@ -7,6 +7,7 @@ for iv = 1:length(varStrInd)
         case {'units'}; units = varargin{varStrInd(iv)+1};
         case {'events'}; events = varargin{varStrInd(iv)+1};
         case {'trials'}; trials = varargin{varStrInd(iv)+1};
+        case {'conditions'}; conditions = varargin{varStrInd(iv)+1};
     end
 end
 
@@ -15,7 +16,7 @@ end
 %%
 nUnits      = length(units);
 nEvents     = length(events);
-nConditions = length(trials);
+nConditions = length(conditions);
 
 %%
 % For each unit
@@ -38,7 +39,7 @@ for unit_i = 1:nUnits
     for event_i = 1:nEvents
         % For each condition
         for condition_i = 1:nConditions
-            condition_label = ['condition_' int2str(condition_i)];
+            condition_label = conditions{condition_i};
             
             signal_average.session.(events{event_i}).(condition_label)(unit_i,:)=...
                 signal_average.individual.(events{event_i}).signal_average{unit_i}(condition_i,:);

@@ -39,10 +39,13 @@ for unit_i = 1:nUnits
                 nTr(ssd_i) = length(ssd_trials);
                 
                 % We can then get the signal averaged across these trials.                                
-                signal_conditions_ssd(ssd_i,:) = ...
+                signal_conditions_ssd_i(ssd_i,:) = ...
                     nanmean(signal_data.(units{unit_i}).(events{event_i})(ssd_trials,:));
             end
             
+            
+            signal_ssd{condition_i} = signal_conditions_ssd_i;
+           
             % Average post-latency matched signals
             if strcmp(weighting,'on')
                 % Get the proportion of trials for each SSD inputted
@@ -51,21 +54,21 @@ for unit_i = 1:nUnits
                for ssd_i = 1:length(nTr_weighting)
                    % Weight the average activity by the proportion of
                    % trials
-                   signal_conditions_ssd(ssd_i,:) = signal_conditions_ssd(ssd_i,:).*nTr_weighting(ssd_i);
+                   signal_conditions_ssd_i(ssd_i,:) = signal_conditions_ssd_i(ssd_i,:).*nTr_weighting(ssd_i);
                end
                % ... and then sum them together to get the weighted
                % average.
-                signal_conditions(condition_i,:) = nansum(signal_conditions_ssd);
+                signal_conditions(condition_i,:) = nansum(signal_conditions_ssd_i);
                
             else
                 % Otherwise, just average across all SSD's without
                 % weighting.
-                signal_conditions(condition_i,:) = nanmean(signal_conditions_ssd);
+                signal_conditions(condition_i,:) = nanmean(signal_conditions_ssd_i);
             end
         end
         
         signal_average.individual.(events{event_i})(unit_i,:) =...
-            table(units(unit_i),{signal_conditions},'VariableName',{'unit','signal_average'});
+            table(units(unit_i),{signal_conditions},{signal_ssd},'VariableName',{'unit','signal_average','signal_ssd'});
     end
 end
 
@@ -75,7 +78,7 @@ for unit_i = 1:nUnits
     for event_i = 1:nEvents
         % For each condition
         for condition_i = 1:nConditions
-            condition_label = ['condition_' int2str(condition_i)];
+            condition_label = conditionLabels{condition_i};
             
             signal_average.session.(events{event_i}).(condition_label)(unit_i,:)=...
                 signal_average.individual.(events{event_i}).signal_average{unit_i}(condition_i,:);
