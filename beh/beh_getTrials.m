@@ -45,8 +45,7 @@ end
 %% Trial history
 clear pre_nostop_ttx ttx_history
 
-activeTrials = stateFlags(stateFlags.IsFixAcquired == 1,:);
-tempttx.nostopFiltered = activeTrials.TrialNumber(activeTrials.IsGoCorrect == 1);
+tempttx.nostopFiltered = tempttx.nostop;
 
 pre_nostop_ttx = tempttx.nostopFiltered - 1;
 pre_nostop_ttx = pre_nostop_ttx(pre_nostop_ttx > 0);

@@ -77,7 +77,7 @@ end
 %% Neural
 nWorkers = 5;
 
-parfor (neural_i = 1:length(dataFiles_beh),nWorkers)
+parfor (neural_i = 1:length(dataFiles_neural),nWorkers)
     % We first report loop status:
     fprintf('Extracting: %s ... [%i of %i]  \n',dataFiles_neural{neural_i},neural_i,length(dataFiles_neural))
     
@@ -93,7 +93,7 @@ parfor (neural_i = 1:length(dataFiles_beh),nWorkers)
     
     % Convolve spike times to get continous trace
     spk_data = [];
-    spk_data = spk_alignTrials(behavior(behaviorIdx).trialEventTimes(:,[2,3,5,6]),...
+    spk_data = spk_alignTrials(behavior(behaviorIdx).trialEventTimes(:,[3]),...
         import_data.time, [-1000 2000]);
     
     trial_nostop_hi = [];  trial_nostop_lo = [];
@@ -102,14 +102,14 @@ parfor (neural_i = 1:length(dataFiles_beh),nWorkers)
     
     signal_average{neural_i} = neural_getSignalAverage(spk_data,...
         'units',fieldnames(spk_data),...
-        'events',{'fixation','target','saccade','tone'},...
+        'events',{'target'},...
         'trials',{trial_nostop_hi,trial_nostop_lo},...
         'conditions',{'hi','lo'});
 end
 
 
 signal_collapse = neural_collapseSignalSession(signal_average,...
-    'events',{'fixation','target','saccade','tone'},...
+    'events',{'target'},...
     'conditions',{'hi','lo'},...
     'conditions_map',[1 2]);
 
@@ -119,7 +119,7 @@ signal_collapse = neural_collapseSignalSession(signal_average,...
      signal_collapse.target.lo,...
      'method','max');
 
- 
+
  %% Clustering
  % Processing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Provide a cell array of SDF's split by conditions
@@ -145,7 +145,7 @@ epochMap = [1,2];
 normResp = {norm_signal_1, norm_signal_2};
 
 % Post-processing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-nClusters_manual = 3; 
+nClusters_manual = 4; 
 clusterNeurons = [];
 for i = 1:nClusters_manual
     clusterNeurons{i} = find(sortIDs(:,nClusters_manual) == i );
@@ -171,10 +171,10 @@ colormap(gray);
 xlabel('Unit Number'); set(gca,'YAxisLocation','Left');
 xticks([0:100:end]); yticks([0:100:end])
 
+ figure('Renderer', 'painters', 'Position', [100 100 1200 250]);hold on
 
 for i = 1:nClusters_manual
-    figure('Renderer', 'painters', 'Position', [100 100 500 400]);hold on
-    
+    subplot(1,nClusters_manual,i); hold on
     plot(sdfTimes{1},nanmean(normResp{1}(clusterNeurons{i},:),1), 'color', 'r');
     plot(sdfTimes{2},nanmean(normResp{2}(clusterNeurons{i},:),1), 'color', 'b');
     vline(0, 'k--'); xlim([-200 600])
@@ -183,19 +183,39 @@ for i = 1:nClusters_manual
     
 end
 
-%%  Plot example cluster
-for clusterIn = 1:nClusters_manual
-    
-    figure('Renderer', 'painters', 'Position', [100 100 500 400]);hold on
-    hold on
-    for ii = 1:length(clusterNeurons{clusterIn})
-        plot(sdfTimes{1},normResp{1}(clusterNeurons{clusterIn}(ii),:), 'color', [colors.hiRew 0.1]);
-        plot(sdfTimes{2},normResp{2}(clusterNeurons{clusterIn}(ii),:), 'color', [colors.loRew 0.1]);
-    end
-    
-    plot(sdfTimes{1},nanmean(normResp{1}(clusterNeurons{clusterIn},:),1), 'color', colors.hiRew,'LineWidth',1.5);
-    plot(sdfTimes{2},nanmean(normResp{2}(clusterNeurons{clusterIn},:),1), 'color', colors.loRew,'LineWidth',1.5);
-    
-    vline(0, 'k--'); xlim([-200 600]); %ylim([-10 10])
-    
-end
+
+
+%% PCA Analysis: Stop-Signal
+% Set data parameters & windows
+ephysWin = [-1000 2000]; winZero = abs(ephysWin(1));
+plotWin = [-250:500]; 
+analyseTime = [-100:200];
+getColors
+
+% Set PCA parameters
+samplingRate = 1/1000; % inherent to the data. Do not change
+numPCs = 8; % pick a number that will capture most of the variance
+timeStep = 10; % smaller values will yield high resolution at the expense of computation time, default will sample at 20ms
+withinConditionsOnly = false; % if true, will only analyze tanlging for times within the same condition
+
+clear PCA_mainInput PCA_mainOutput
+% Setup data for PCA analysis
+PCA_mainInput(1).A = signal_collapse.target.hi';
+PCA_mainInput(1).times = plotWin';
+PCA_mainInput(1).analyzeTimes = analyseTime';
+PCA_mainInput(1).condition = 'High Reward';
+PCA_mainInput(1).color = [colors.hiRew 1];
+
+PCA_mainInput(2).A = signal_collapse.target.lo';
+PCA_mainInput(2).times = plotWin';
+PCA_mainInput(2).analyzeTimes = analyseTime';
+PCA_mainInput(2).condition = 'High Reward';
+PCA_mainInput(2).color = [colors.loRew 1];
+
+
+% Run PCA analysis
+[~, PCA_mainOutput] = tangleAnalysis(PCA_mainInput, samplingRate,'numPCs',numPCs,'softenNorm',5 ,'timeStep',timeStep,'withinConditionsOnly',withinConditionsOnly); % soft normalize neural data
+pca_figure(PCA_mainInput,PCA_mainOutput)
+
+
+

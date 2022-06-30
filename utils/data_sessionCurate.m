@@ -81,5 +81,18 @@ end
 dajo_datamap_post = ...
     dajo_penmap(monkey_flag == 1 & area_flag == 1 & spacing_flag == 1 & signal_flag == 1,:);
 
+%% Inform the user of key details
+
+for session_i = 1:size(dajo_datamap_post,1)
+    nUnits_session(session_i) = size(dajo_datamap_post.spkInfo(session_i).unitInfo(...
+        dajo_datamap_post.spkInfo(session_i).unitInfo.flag_mua == 0 & ...
+        dajo_datamap_post.spkInfo(session_i).unitInfo.flag_noise == 0,:),1);  
+end
+
+fprintf('In this curated data, there are %i valid units, across %i unique sites, in %i sessions \n',...
+    sum(nUnits_session),size(unique(table(dajo_datamap_post.grid),'rows'),1),size(dajo_datamap,1))
+
+
+
 
 end
